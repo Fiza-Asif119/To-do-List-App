@@ -1,119 +1,201 @@
 var cardBg;
-var currentEditCard;
-function editPost(btn) {
-    var card = btn.parentNode.parentNode
-    var title = card.children[1].children[0].innerText;
-    var description = card.children[1].children[1].innerText;
-    // console.log(title,description);
-    document.getElementById("title").value = title;
-    document.getElementById("description").value = description;
-    card.remove()
 
-}
-
-function deletePost(btn) {
-    var card = btn.parentNode.parentNode
-    var title = card.children[1].children[0];
-    // console.log(title,description);
-    card.remove()
-}
-
+// _____________________________________________________________CREATE POST
 function post() {
     var title = document.getElementById("title").value;
     var description = document.getElementById("description").value;
-    var posts = document.getElementById("posts");
 
     if (title.trim() && description.trim()) {
-        posts.innerHTML += `<div class="col-sm-12 col-md-6 col-lg-4">
-    <div class="card mt-3" style="width: 18rem;">
-                    <img src="${cardBg || 'images/1.jfif'}" class="card-img-top" alt="...">
-                    <div class="card-body">
-                        <h5 class="card-title">${title}</h5>
-                        <p class="card-text">${description}</p>
-                        <button class="btn btn-primary" onclick="editPost(this)">Edit</button>
-                        <button class="btn btn-primary" onclick="deletePost(this)">Delete</button>
-                    </div>
-                </div>
-                </div>`
-    }
-    else {
+
+        var postObj = {
+            title: title,
+            description: description,
+            image: cardBg || "images/1.jfif"
+        };
+
+        var allPosts = JSON.parse(localStorage.getItem("posts")) || [];
+
+        allPosts.push(postObj);
+        // allPosts.unshift(postObj);
+
+        localStorage.setItem("posts", JSON.stringify(allPosts));
+
+        showPosts();
+
+        document.getElementById("title").value = "";
+        document.getElementById("description").value = "";
+        cardBg = null;
+
+    } else {
         Swal.fire({
             icon: "error",
             title: "Oops...",
             text: "Title & description can't be empty!",
         });
     }
-
-    document.getElementById("title").value = "";
-    document.getElementById("description").value = "";
 }
 
+// _______________________________________________________________ SHOW POSTS FUNCTION
+function showPosts() {
+    var posts = document.getElementById("posts");
+    var allPosts = JSON.parse(localStorage.getItem("posts")) || [];
+
+    posts.innerHTML = "";
+
+    //_________________________________ always show container
+    posts.style.display = "flex";
+
+    if (allPosts.length === 0) {
+        posts.innerHTML = "<p class='text-center'>No posts yet</p>";
+        return;
+    }
+
+    for (var i = 0; i < allPosts.length; i++) {
+        posts.innerHTML += `
+        <div class="col-sm-12 col-md-6 col-lg-4">
+            <div class="card mt-3" style="width: 18rem;">
+                <img src="${allPosts[i].image}" class="card-img-top">
+                <div class="card-body">
+                    <h5 class="card-title">${allPosts[i].title}</h5>
+                    <p class="card-text">${allPosts[i].description}</p>
+                    <button class="btn btn-primary" onclick="editPost(${i})">Edit</button>
+                    <button class="btn btn-primary" onclick="deletePost(${i})">Delete</button>
+                </div>
+            </div>
+        </div>`;
+    }
+}
+
+// _____________________________________________________________DELETE POST
+function deletePost(index) {
+    var allPosts = JSON.parse(localStorage.getItem("posts")) || [];
+
+    allPosts.splice(index, 1);
+
+    localStorage.setItem("posts", JSON.stringify(allPosts));
+
+    showPosts();
+}
+
+//____________________________________________________________ EDIT POST
+function editPost(index) {
+    var allPosts = JSON.parse(localStorage.getItem("posts")) || [];
+
+    document.getElementById("title").value = allPosts[index].title;
+    document.getElementById("description").value = allPosts[index].description;
+
+    allPosts.splice(index, 1);
+    localStorage.setItem("posts", JSON.stringify(allPosts));
+
+    showPosts();
+    createPost();
+}
+
+// ___________________________________________________________SHOW POST BOX
 function createPost() {
     document.getElementById("postBox").style.display = "block";
 }
+
+// __________________________________________________________HIDE POST BOX
 function hidePost() {
     document.getElementById("postBox").style.display = "none";
 }
-function pageSignup(){
-    document.getElementById("pageSignup").style.display = "none";
-}
+
+// ____________________________________________________________REGISTER
 function register() {
     var fullName = document.getElementById("userName").value;
-    var cellNumb = document.getElementById("cellNumb").value;
     var email = document.getElementById("email").value;
     var password = document.getElementById("inputPassword5").value;
 
-    if (
-        fullName.trim() === "" ||
-        cellNumb.trim() === "" ||
-        email.trim() === "" ||
-        password.trim() === ""
-    ) {
-        Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "All fields are required!"
-        });
-    }
-
-    // email check
-    if (!email.includes("@") || !email.includes(".")) {
-        Swal.fire({
-            icon: "error",
-            title: "Invalid Email",
-            text: "Enter a valid email"
-        });
+    if (!fullName || !email || !password) {
+        Swal.fire("Error", "All fields required", "error");
         return;
     }
 
-    // password check
-    if (password.length < 8) {
-        Swal.fire({
-            icon: "error",
-            title: "Weak Password",
-            text: "Minimum 8 characters required"
-        });
-        return;
-    }
+    var userObj = {
+        name: fullName,
+        email: email,
+        password: password
+    };
 
-    Swal.fire({
-        title: "Done",
-        icon: "success"
-    });
+    localStorage.setItem("user", JSON.stringify(userObj));
 
-    document.getElementById("posts").style.display = "flex";
-    document.getElementById("pageSignup").style.display = "none";
+    Swal.fire("Registered!", "Now login", "success");
+
+    showLogin();
 }
 
-function selectImg(src) {
+// _______________________________________________________________LOGIN
+function login() {
+    var email = document.getElementById("loginEmail").value;
+    var password = document.getElementById("loginPassword").value;
+
+    var user = JSON.parse(localStorage.getItem("user"));
+
+    if (user && user.email === email && user.password === password) {
+        localStorage.setItem("isLoggedIn", "true");
+
+        document.getElementById("pageLogin").style.display = "none";
+        document.getElementById("posts").style.display = "flex";
+
+        document.getElementById("authText").style.display = "none";
+
+        Swal.fire("Welcome!", "Login successful", "success");
+    } else {
+        Swal.fire("Error", "Invalid credentials", "error");
+    }
+}
+
+// __________________________________________________________LOGOUT
+function logout() {
+    localStorage.setItem("isLoggedIn", "false");
+
+    document.getElementById("posts").style.display = "none";
+    document.getElementById("pageSignup").style.display = "block";
+
+    // 🔥 show auth text again
+    document.getElementById("authText").style.display = "block";
+}
+
+// ____________________________________________________________SWITCH PAGES
+function showLogin() {
+    document.getElementById("pageSignup").style.display = "none";
+    document.getElementById("pageLogin").style.display = "block";
+    document.getElementById("authText").style.display = "block";
+}
+
+function showSignup() {
+    document.getElementById("pageSignup").style.display = "block";
+    document.getElementById("pageLogin").style.display = "none";
+    document.getElementById("authText").style.display = "block";
+}
+
+// _____________________________________________________________SELECT IMAGE
+function selectImg(src, element) {
     cardBg = src;
-    // console.log(src, event.target.className);
+
     var bgImg = document.getElementsByClassName("bgImg");
 
     for (var i = 0; i < bgImg.length; i++) {
-        console.log(bgImg[i].className);
-
-        bgImg[i].className = "bgImg"
+        bgImg[i].classList.remove("selectedImg");
     }
-    event.target.classList.add("selectedImg")
+
+    element.classList.add("selectedImg");
 }
+
+// ________________________________________________________________CHECK USER ON LOAD
+if (localStorage.getItem("isLoggedIn") === "true") {
+    document.getElementById("pageSignup").style.display = "none";
+    document.getElementById("pageLogin").style.display = "none";
+    document.getElementById("posts").style.display = "flex";
+    document.getElementById("authText").style.display = "none";
+} else {
+    if (localStorage.getItem("user")) {
+        document.getElementById("pageSignup").style.display = "none";
+        document.getElementById("pageLogin").style.display = "block";
+        document.getElementById("authText").style.display = "block";
+    }
+}
+
+// __________LOAD POSTS
+showPosts();

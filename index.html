@@ -17,12 +17,9 @@
     <!-- NAVBAR -->
     <nav class="navbar">
         <div class="container-fluid">
-            <span class="mb-0 h3">To-do</span>
-            <form class="d-flex" role="search">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-                <button class="btn btn-outline-dark" type="button">Search</button>
-            </form>
-            <button class="btn btn-outline-dark" onclick="createPost()" type="submit">create post</button>
+            <span class="mb-0 h3 brand">To-do</span>
+            <button class="btn btn-outline-dark postbtn" onclick="createPost()" type="submit">create post</button>
+            <button class="btn btn-danger" onclick="logout()">Logout</button>
         </div>
     </nav>
 
@@ -48,6 +45,24 @@
         </div>
         <div class="text-center"><button class="btn register btn-outline-dark w-50 ms-auto mt-3" onclick="register()">Register</button></div>
     </div>
+    <div class="container mt-5 p-2 mx-auto w-50" id="pageLogin" style="display:none;">
+    <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-control" id="loginEmail">
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Password</label>
+        <input type="password" class="form-control" id="loginPassword">
+    </div>
+    <div class="text-center">
+        <button class="btn btn-outline-dark w-50 logbtn" onclick="login()">Login</button>
+    </div>
+</div>
+
+<div id="authText" class="text-center mt-2">
+    Already have an account? 
+    <span style="color:blue;cursor:pointer;" onclick="showLogin()">Login</span>
+</div>
 
     <!-- TO-DO POSTING -->
     <div class="container post-container p-2 card mt-5 col-sm-12 col-md-6 col-lg-4" id="postBox">
@@ -60,11 +75,11 @@
             <textarea class="form-control" id="description" rows="3"></textarea>
         </div>
         <div class="images d-flex justify-content-around">
-            <img src="images/1.jfif" class="bgImg" onclick="selectImg(this.src)" alt="">
-            <img src="images/2.avif" class="bgImg" onclick="selectImg(this.src)" alt="">
-            <img src="images/3.jpg" class="bgImg" onclick="selectImg(this.src)" alt="">
-            <img src="images/4.jpg" class="bgImg" onclick="selectImg(this.src)" alt="">
-            <img src="images/5.jpg" class="bgImg" onclick="selectImg(this.src)" alt="">
+            <img src="images/1.jfif" class="bgImg" onclick="selectImg(this.src, this)" alt="">
+            <img src="images/2.avif" class="bgImg" onclick="selectImg(this.src, this)" alt="">
+            <img src="images/3.jpg" class="bgImg" onclick="selectImg(this.src, this)" alt="">
+            <img src="images/4.jpg" class="bgImg" onclick="selectImg(this.src, this)" alt="">
+            <img src="images/5.jpg" class="bgImg" onclick="selectImg(this.src, this)" alt="">
         </div>
         <div class="mybtns text-center my-2">
         <button class="btn mt-2 btn-outline-dark" onclick="post()">POST</button>

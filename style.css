@@ -1,12 +1,24 @@
 .navbar{
-    background-color: aqua;
+    background-color: rgb(56, 38, 154);
+}
+.postbtn{
+    color: white;
+    border-color: white;
+}
+.brand{
+    color: white;
 }
 .form-control:focus{
     border-color: #ab47bc;
     box-shadow: 0 0 0 0.2rem rgba(171, 71, 188, 0.25) !important;
 }
 .signupPage{
-    background-color: #ab47bc;
+    /* background-color: #ab47bc; */
+    border: 2px solid black;
+    border-radius: 10px;
+}
+#pageLogin{
+    border: 2px solid black;
     border-radius: 10px;
 }
 #pageSignup{
@@ -26,6 +38,9 @@
     display: none;
 }
 .register{
-    background-color: black;
+    background-color: rgb(56, 38, 154);
     color: white;
+}
+.logbtn{
+    background-color: #ab47bc;
 }
